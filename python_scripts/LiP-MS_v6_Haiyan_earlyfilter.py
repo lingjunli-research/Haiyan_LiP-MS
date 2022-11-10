@@ -15,11 +15,6 @@ from scipy.stats import ttest_ind
 working_directory = input('Input path to working directory, where all results will be stored: ')
 protein_path = input('Input path to Proteingroup.csv file: ')
 peptides_path = input('Input path to Peptidegroup.csv file: ')
-# =============================================================================
-# protein_path = r"D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Input\proteinGroups_abridged.csv"
-# peptides_path = r"D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Input\peptides_abridged.csv"
-# working_directory = r'D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Output'
-# =============================================================================
 p_cutoff_protein = input('Enter p-value cutoff for proteins (0.05 is recommended): ')
 up_thresh_protein = input('Enter upregulated protein threshold (recommended is 2): ')
 down_thresh_protein = input('Enter downregulated protein threshold (recommended is -0.5): ')
@@ -27,26 +22,23 @@ down_thresh_protein = input('Enter downregulated protein threshold (recommended 
 p_cutoff_peptide = input('Enter p-value cutoff for peptide (0.05 is recommended): ')
 up_thresh_peptide = input('Enter upregulated peptide threshold (recommended is 2): ')
 down_thresh_peptide = input('Enter downregulated peptide threshold (recommended is -0.5): ')
-
-# =============================================================================
-# p_cutoff_protein = 0.05
-# up_thresh_protein = 2
-# down_thresh_protein = -0.5
-# =============================================================================
-
 p_cutoff_protein = float(p_cutoff_protein)
 up_thresh_protein = float(up_thresh_protein)
 down_thresh_protein = float(down_thresh_protein)
-
+p_cutoff_peptide = float(p_cutoff_peptide)
+up_thresh_peptide = float(up_thresh_peptide)
+down_thresh_peptide = float(down_thresh_peptide)
 # =============================================================================
+# protein_path = r"D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Input\proteinGroups_L - Copy.csv"
+# peptides_path = r"D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Input\peptides_L - Copy.csv"
+# working_directory = r"D:\LiP-MS_Haiyan\20221108_EarlyFilter_Haiyan\Diagnostics\Input\test_out\test_again"
+# p_cutoff_protein = 0.05
+# up_thresh_protein = 2
+# down_thresh_protein = -0.5
 # p_cutoff_peptide = 0.05
 # up_thresh_peptide = 2
 # down_thresh_peptide = -0.5
 # =============================================================================
-
-p_cutoff_peptide = float(p_cutoff_peptide)
-up_thresh_peptide = float(up_thresh_peptide)
-down_thresh_peptide = float(down_thresh_peptide)
 
 protein = pd.read_csv(protein_path)
 peptide = pd.read_csv(peptides_path)
@@ -97,10 +89,11 @@ protein_calc['SRT/Ctrl fold change_protein'] = protein_calc['SRT avg_protein'] /
 df_common = pd.merge(protein_calc, peptide, on=['Protein names'])
 df_common['protein p-value'] = ttest_ind(df_common[['SRT1_protein', 'SRT2_protein','SRT3_protein']], 
                                 df_common[['Ctrl1_protein', 'Ctrl2_protein', 'Ctrl3_protein']], axis=1, equal_var=True, alternative='two-sided')[1]
-
+print(df_common)
 df_common = df_common.drop(df_common[df_common['Ctrl1_peptide'] == 'CTRL'].index)
 df_common = df_common.drop(df_common[df_common['SRT1_peptide'] == 'SRT'].index)
-
+print(df_common)
+#%%
 Ctrl = pd.DataFrame()
 Ctrl['Ctrl1_peptide'] = df_common['Ctrl1_peptide'].astype(float)
 Ctrl['Ctrl2_peptide'] = df_common['Ctrl2_peptide'].astype(float)
@@ -118,7 +111,9 @@ SRTvCtrl['SRT 1 vs Ctrl normalized_peptide'] = (df_common['SRT1_peptide'].astype
 SRTvCtrl['SRT 2 vs Ctrl normalized_peptide'] = (df_common['SRT2_peptide'].astype(float)) / (df_common['SRT/Ctrl fold change_protein'].astype(float))
 SRTvCtrl['SRT 3 vs Ctrl normalized_peptide'] = (df_common['SRT3_peptide'].astype(float)) / (df_common['SRT/Ctrl fold change_protein'].astype(float))
 SRTvCtrl['SRT vs Ctrl normalized average_peptide'] = SRTvCtrl.astype(float).replace(0, np.nan).mean(axis=1, skipna=True)
-
+SRTvCtrl['Ctrl1_protein'] = df_common['Ctrl1_protein']
+SRTvCtrl['Ctrl2_protein'] = df_common['Ctrl2_protein']
+SRTvCtrl['Ctrl3_protein'] = df_common['Ctrl3_protein']
 SRTvCtrl['Protein IDs'] = df_common['Protein ID']
 SRTvCtrl['Protein Names'] = df_common['Protein names']
 SRTvCtrl['Gene Names'] = df_common['Gene names']
