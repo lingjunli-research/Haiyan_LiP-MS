@@ -25,9 +25,9 @@ S_file.columns = [str(col) + '_S' for col in S_file.columns]
 P_file.columns = [str(col) + '_P' for col in P_file.columns]
 T_file.columns = [str(col) + '_T' for col in T_file.columns]
 
-S_file['Sequence_S'] = S_file['Sequence_S'].fillna('NA')
-P_file['Sequence_P'] = P_file['Sequence_P'].fillna('NA')
-T_file['Sequence_T'] = T_file['Sequence_T'].fillna('NA')
+S_file['Sequence_S'] = S_file['Sequence_S'].fillna('0')
+P_file['Sequence_P'] = P_file['Sequence_P'].fillna('0')
+T_file['Sequence_T'] = T_file['Sequence_T'].fillna('0')
 
 S_peptides = S_file['Sequence_S'].values.tolist()
 P_peptides = P_file['Sequence_P'].values.tolist()
